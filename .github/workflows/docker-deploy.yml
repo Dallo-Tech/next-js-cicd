@@ -31,4 +31,4 @@ jobs:
 
         steps:
         - name: connect and pull
-          run: sshpass -p ${{ secrets.REMOTE_SSH_PW }} ssh -o StrictHostKeyChecking=no -p 22  ${{ secrets.REMOTE_SSH_USER }}@${{ secrets.REMOTE_SSH_HOST }} && "cd ${{ secrets.REMOTE_WORK_DIR }} && docker-compose pull && docker-compose up -d && exit"
+          run: sshpass -p ${{ secrets.REMOTE_SSH_PW }} ssh -v -o StrictHostKeyChecking=no -p 22  ${{ secrets.REMOTE_SSH_USER }}@${{ secrets.REMOTE_SSH_HOST }} && "cd ${{ secrets.REMOTE_WORK_DIR }} && docker-compose pull && docker-compose up -d && exit"
