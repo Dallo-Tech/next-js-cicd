@@ -40,4 +40,4 @@ jobs:
             script: |
               cd ${{ secrets.REMOTE_WORK_DIR }}
               docker-compose pull
-              docker-compose up
+              docker-compose up -d
