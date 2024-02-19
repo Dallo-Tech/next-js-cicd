@@ -30,12 +30,7 @@ jobs:
         runs-on: ubuntu-latest
 
         steps:
-        - name: install ssh keys
-          run: |
-            install -m 600 -D /dev/null ~/.ssh/id_rsa
-            echo "${{ secrets.REMOTE_PK }}" > ~/.ssh/id_rsa
-            ssh-keyscan -H ${{ secrets.REMOTE_SSH_HOST }} > ~/.ssh/known_hosts
         - name: connect and pull
-          run: ssh ${{ secrets.REMOTE_SSH_USER }}@${{ secrets.REMOTE_SSH_HOST }} "cd ${{ secrets.REMOTE_WORK_DIR }} && echo ${{ secrets.DOCKER_HUB_TOKEN }} | docker login -u ${{secrets.DOCKER_HUB_USERNAME}} --password-stdin && docker-compose pull && docker-compose up -d && exit"
+          run: echo ${{ secrets.REMOTE_SSH_PW }} | ssh ${{ secrets.REMOTE_SSH_USER }}@${{ secrets.REMOTE_SSH_HOST }} --password-stdin && "cd ${{ secrets.REMOTE_WORK_DIR }} && echo ${{ secrets.DOCKER_HUB_TOKEN }} | docker login -u ${{secrets.DOCKER_HUB_USERNAME}} --password-stdin && docker-compose pull && docker-compose up -d && exit"
         - name: cleanup
           run: rm -rf ~/.ssh
