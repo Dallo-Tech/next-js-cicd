@@ -31,4 +31,13 @@ jobs:
 
         steps:
         - name: connect and pull
-          run: sshpass -p ${{ secrets.REMOTE_SSH_PW }} ssh -v -o StrictHostKeyChecking=no -p 22  ${{ secrets.REMOTE_SSH_USER }}@${{ secrets.REMOTE_SSH_HOST }} && "cd ${{ secrets.REMOTE_WORK_DIR }} && docker compose pull && docker compose up -d"
+          uses: appleboy/ssh-action@v0.1.3
+          with:
+            host: ${{secrets.REMOTE_SSH_HOST}}
+            username: ${{secrets.REMOTE_SSH_USER}}
+            password: ${{ secrets.PASSWORD }}
+            port: 22
+            script: |
+              cd ${{ secrets.REMOTE_WORK_DIR }}
+              docker-compose pull
+              docker-compose up
