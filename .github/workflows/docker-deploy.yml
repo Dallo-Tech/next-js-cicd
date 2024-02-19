@@ -1,0 +1,41 @@
+name: publish
+
+on:
+  push:
+    branches: [ "master" ]
+
+env:
+  REGISTRY: dockerhub.io
+  IMAGE_NAME: dallotech/nextjs-blog:latest
+
+jobs:
+    publish:
+        name: publish image
+        runs-on: ubuntu-latest
+
+        steps:
+        - uses: actions/checkout@v3
+        - name: Login docker
+          run: |
+            echo ${{ secrets.DOCKER_HUB_TOKEN }} | docker login -u dallotech --password-stdin
+        - name: Build and Publish
+          run: |
+            docker-compose build
+            docker-compose push
+
+
+    deploy:
+        needs: publish
+        name: deploy image
+        runs-on: ubuntu-latest
+
+        steps:
+        - name: install ssh keys
+          run: |
+            install -m 600 -D /dev/null ~/.ssh/id_rsa
+            echo "${{ secrets.REMOTE_PK }}" > ~/.ssh/id_rsa
+            ssh-keyscan -H ${{ secrets.REMOTE_SSH_HOST }} > ~/.ssh/known_hosts
+        - name: connect and pull
+          run: ssh ${{ secrets.REMOTE_SSH_USER }}@${{ secrets.REMOTE_SSH_HOST }} "cd ${{ secrets.REMOTE_WORK_DIR }} && docker-compose pull && docker-compose up -d && exit"
+        - name: cleanup
+          run: rm -rf ~/.ssh
