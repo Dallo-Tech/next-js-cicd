@@ -30,12 +30,5 @@ jobs:
         runs-on: ubuntu-latest
 
         steps:
-        - name: install ssh keys
-          run: |
-            install -m 600 -D /dev/null ~/.ssh/id_rsa
-            echo "${{ secrets.REMOTE_PK }}" > ~/.ssh/id_rsa
-            ssh-keyscan -H ${{ secrets.REMOTE_SSH_HOST }} > ~/.ssh/known_hosts
         - name: connect and pull
-          run: ssh -v ${{ secrets.REMOTE_SSH_USER }}@${{ secrets.REMOTE_SSH_HOST }} && "cd ${{ secrets.REMOTE_WORK_DIR }} && docker-compose pull && docker-compose up -d && exit"
-        - name: cleanup
-          run: rm -rf ~/.ssh
+          run: sshpass -p ${{ secrets.REMOTE_SSH_PW }} ssh -o StrictHostKeyChecking=no -p 22  ${{ secrets.REMOTE_SSH_USER }}@${{ secrets.REMOTE_SSH_HOST }} && "cd ${{ secrets.REMOTE_WORK_DIR }} && docker-compose pull && docker-compose up -d && exit"
